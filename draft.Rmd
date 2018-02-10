@@ -20,7 +20,10 @@ library(gapminder)
 ## shiny {.smaller}
 
 <div style="height:600px;width:1000px;border:1px solid #ccc;font:16px/26px Georgia, Garamond, Serif;overflow:auto;">
-ff
+
+I can directly change this here...
+
+
 </div>
 
 ## shiny {.smaller}
