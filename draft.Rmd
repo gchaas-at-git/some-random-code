@@ -1,0 +1,186 @@
+---
+title: "Making Statistics Fun: Interactive Visualizations in R"
+author: "Georg-Christoph Haas"
+date: "30 Januar 2018"
+output: 
+  ioslides_presentation:
+  widescreen: True
+runtime: shiny
+
+---
+##
+```{r load_packages, include=FALSE}
+library(plotly)
+library(ggplot2)
+library(dplyr)
+library(ggvis)
+library(gapminder)
+```
+
+## shiny {.smaller}
+
+<div style="height:600px;width:1000px;border:1px solid #ccc;font:16px/26px Georgia, Garamond, Serif;overflow:auto;">
+ff
+</div>
+
+## shiny {.smaller}
+```{r echo=F}
+#---------------------
+#interactive graph with shiny -example
+#-----------------------
+library(shiny)
+library(ggplot2)
+
+ui <- fluidPage(
+  
+  # Sidebar layout with a input and output definitions
+  sidebarLayout(
+    
+    # Inputs
+    sidebarPanel(
+      selectInput(inputId = "x", 
+                  label = "X", 
+                  choices= c("date", "pce", "pop", "psavert", "uempmed", "unemploy"), 
+                  selected = "date" ),
+      
+      selectInput(inputId = "y", 
+                  label = "Y", 
+                  choices = c("date", "pce", "pop", "psavert", "uempmed", "unemploy", "unemploy/pop"),
+                  selected = "unemploy")
+    ),
+    
+    
+    # Outputs
+    mainPanel(
+      plotOutput(outputId = "plot")
+    )
+    
+  )
+)
+
+# Define server function required to create the scatterplot
+server <- function(input, output) {
+  
+  
+  # Create the scatterplot object the plotOutput function is expecting
+  output$plot <- renderPlot({
+    ggplot(data = economics, aes_string(x = input$x, y = input$y)) +
+      geom_point() +
+      geom_line(colour="red")
+  })
+}
+
+# Create a Shiny app object
+shinyApp(ui = ui, server = server)
+```
+
+## shiny {.smaller}
+<div style="height:500px;width:1000px;border:1px solid #ccc;font:16px/26px Georgia, Garamond, Serif;overflow:auto;">
+
+```{r eval=F}
+#---------------------
+#interactive graph with shiny -example
+#-----------------------
+library(shiny)
+library(ggplot2)
+
+ui <- fluidPage(
+  
+  # Sidebar layout with a input and output definitions
+  sidebarLayout(
+    
+    # Inputs
+    sidebarPanel(
+      selectInput(inputId = "x", 
+                  label = "X", 
+                  choices= c("date", "pce", "pop", "psavert", "uempmed", "unemploy"), 
+                  selected = "date" ),
+      
+      selectInput(inputId = "y", 
+                  label = "Y", 
+                  choices = c("date", "pce", "pop", "psavert", "uempmed", "unemploy", "unemploy/pop"),
+                  selected = "unemploy")
+    ),
+    
+    
+    # Outputs
+    mainPanel(
+      plotOutput(outputId = "plot")
+    )
+    
+  )
+)
+
+# Define server function required to create the scatterplot
+server <- function(input, output) {
+  
+  
+  # Create the scatterplot object the plotOutput function is expecting
+  output$plot <- renderPlot({
+    ggplot(data = economics, aes_string(x = input$x, y = input$y)) +
+      geom_point() +
+      geom_line(colour="red")
+  })
+}
+
+# Create a Shiny app object
+shinyApp(ui = ui, server = server)
+```
+
+</div>
+
+## Dinner
+
+---
+title: "Tabset Row"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+runtime: shiny
+---
+
+Row {.tabset .tabset-fade}
+-------------------------------------
+   
+### Chart 2
+
+```{r}
+cocaine %>% 
+  ggvis(~potency, ~price) %>%
+  filter(state %in% 
+           eval(input_checkboxgroup(c("Iowa" = "IA", 
+                                      "Minissota" = "MN", 
+                                      "Wisconson" = "WI"),
+                                    label= "Select states",
+                                    selected = "WI"))) %>% 
+  layer_points(fill = ~state, size := 50, opacity := 0.5) 
+
+```   
+ 
+### Chart 3
+    
+```{r}
+cocaine %>% 
+  ggvis(~potency, ~price) %>%
+  filter(state %in% 
+           eval(input_checkboxgroup(c("Iowa" = "IA", 
+                                      "Minissota" = "MN", 
+                                      "Wisconson" = "WI"),
+                                    label= "Select states",
+                                    selected = "WI"))) %>% 
+  layer_points(fill = ~state, size := 50, opacity := 0.5) 
+```
+
+
+```{r checkboxgroup_fig, echo = F}
+
+cocaine %>% 
+  ggvis(~potency, ~price) %>%
+  filter(state %in% 
+           eval(input_checkboxgroup(c("Iowa" = "IA", 
+                                      "Minissota" = "MN", 
+                                      "Wisconson" = "WI"),
+                                    label= "Select states",
+                                    selected = "WI"))) %>% 
+  layer_points(fill = ~state, size := 50, opacity := 0.5) 
+```
